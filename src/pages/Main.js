@@ -1,0 +1,130 @@
+import React, { useRef, useState } from "react";
+import styled from "styled-components";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import ChatRoom from "./ChatRoom";
+
+import NoteList from "./NoteList";
+// import Note from "./Note";
+import NoteEditor from "./NoteEditor";
+import NoteView from "./NoteView";
+
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-grow: 1;
+  background-color: #e5e5e5;
+`;
+
+// 채팅 입력창 우측하단으로 이동시키려고한 흔적
+// const ChatRoomWrapper = styled.div`
+//   top: 0%;
+//   left: 0%;
+//   transform: translate(65%, -2.3%);
+//   bottom: 0;
+//   right: 0;
+// `;
+
+const MainComponent  = () => {
+  const sidebarRef = useRef();
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    console.log("로그아웃 이벤트 처리");
+  };
+
+  // 노트 추가 로직
+  const [notes, setNotes] = useState([
+    { id: 1, title: "Note 1", content: "content1" },
+    { id: 2, title: "Note 2", content: "content2" },
+  ]);
+
+  // `noteId`, `noteTitle`, `noteContent` 상태 관리
+  const [noteId, setNoteId] = useState(null);
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+
+  const deleteNote = (id) => {
+    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+  };
+
+  // 노트 추가 버튼 클릭 로직
+  const createNote = () => {
+    console.log("노트 추가 버튼이 클릭되었습니다.");
+    navigate("/new");
+  };
+
+  // 노트 저장 수정
+  const saveNote = (id, title, content) => {
+    if (id) {
+      const updatedNotes = notes.map((note) => {
+        if (note.id === id) {
+          return { ...note, title, content };
+        }
+        return note;
+      });
+      // console.log("업데이트 됨");
+      setNotes(updatedNotes);
+    } else {
+      const newNote = { id: Date.now(), title, content };
+      setNotes([...notes, newNote]);
+      // console.log("새로 추가 됨");
+    }
+    navigate("/notes");
+  };
+
+  const cancelNoteEditing = () => {
+    navigate("/notes");
+  };
+
+  // 수정하기
+  const handleEdit = (id, title, content) => {
+    setNoteId(id);
+    setNoteTitle(title);
+    setNoteContent(content);
+    navigate(`/note/${id}/edit`);
+  };
+
+  return (
+    <AppContainer>
+
+
+        <Header username="오태원" onLogout={handleLogout} />
+        <MainContainer>
+          <Sidebar ref={sidebarRef} />
+          {/* <ChatRoomWrapper> */}
+          {/* 사이드바의 너비를 참조하여, 채팅방 컴포넌트의 너비를 동적으로 변경해주는 역할. 이를 통해 사이드바의 크기가 변경되면, 채팅방의 너비도 상응하는 크기로 자동으로 변경해줌 */}
+          {/* ChatRoom 컴포넌트에게 sidebarWidth라는 prop을 전달하고 있음 */}
+          <ChatRoom sidebarWidth={sidebarRef.current ? sidebarRef.current.clientWidth : 200} />
+          {/* </ChatRoomWrapper> */}
+
+          {<Routes>
+            <Route path="/notes" element={<NoteList notes={notes} deleteNote={deleteNote} createNote={createNote} />} />
+            <Route path="/note/:id" element={<NoteView notes={notes} onEdit={handleEdit} deleteNote={deleteNote} />} />
+            <Route path="/note/:id/edit" element={<NoteEditor noteId={noteId} title={noteTitle} content={noteContent} onSave={saveNote} onCancel={cancelNoteEditing} />} />
+            <Route path="/new" element={<NoteEditor onSave={saveNote} onCancel={cancelNoteEditing} />} />
+          </Routes>}
+        </MainContainer>
+
+
+    </AppContainer>
+  );
+};
+
+const Main = () => {
+  return (
+    <Router>
+      <MainComponent />
+    </Router>
+  );
+};
+
+export default Main;
