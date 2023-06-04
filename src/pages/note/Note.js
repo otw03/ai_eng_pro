@@ -13,7 +13,7 @@ const Note = ({ note }) => {
     <NoteContainer>
       
       <h3>            
-        <Link to={`/note/${note.id}`}>
+        <Link to={`/main/note/view/${note.id}`}>
             {note.title}
         </Link>
       </h3>

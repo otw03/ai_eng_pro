@@ -38,6 +38,8 @@ const Button = styled.button`
 `;
 
 const NoteList = ({ notes, deleteNote, createNote }) => {
+  // const noteList = notes || [];
+
   return (
     <Container>
       <h2>노트 목록</h2>

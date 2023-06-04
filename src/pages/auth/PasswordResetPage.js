@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   text-align: center;
@@ -51,10 +52,13 @@ const Button = styled.button`
 `;
 
 const PasswordResetPage = () => {
+  const navigate = useNavigate();
+
   const handleResetSubmit = (e) => {
     e.preventDefault();
     // 비밀번호 재설정 처리 로직
     console.log('비밀번호 재설정');
+    navigate("/");
   };
 
   return (

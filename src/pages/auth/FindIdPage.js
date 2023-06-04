@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   max-width: 400px;
@@ -54,10 +55,13 @@ const Button = styled.button`
 `;
 
 const FindIdPage = () => {
+  const navigate = useNavigate();
+
   const handleEmailSubmit = (e) => {
     e.preventDefault();
     // 아이디 찾기 처리 로직
     console.log('아이디 찾기 - 이메일 전송');
+    navigate("/");
   };
 
   return (

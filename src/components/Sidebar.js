@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { NavLink } from "react-router-dom";
 
 // 사이드바 접고 펴는 토글 버튼
 const ToggleButton = styled.button`
@@ -60,12 +61,18 @@ const Sidebar = () => {
         {isCollapsed ? '>' : '<'}
       </ToggleButton>
       <SidebarContent isCollapsed={isCollapsed}> {/* 사이드바를 토글하였을 때 사이드바 내부의 컨텐츠를 숨기는 코드 */}
-      <Menu>
-        <MenuItem onClick={() => handleMenuClick('메뉴1')}>메뉴1</MenuItem>
-        <MenuItem onClick={() => handleMenuClick('메뉴2')}>메뉴2</MenuItem>
-        <MenuItem onClick={() => handleMenuClick('메뉴3')}>메뉴3</MenuItem>
-        {/* 추가적인 메뉴 아이템들 */}
-      </Menu>
+        <Menu>
+          <MenuItem>
+            <NavLink to="/main/chat">메뉴1 (ChatRoom)</NavLink>
+          </MenuItem>
+          <MenuItem>
+            <NavLink to="/main/note">메뉴2 (NoteList)</NavLink>
+          </MenuItem>
+          {/* <MenuItem onClick={() => handleMenuClick('메뉴1')}>메뉴1</MenuItem>
+          <MenuItem onClick={() => handleMenuClick('메뉴2')}>메뉴2</MenuItem>
+          <MenuItem onClick={() => handleMenuClick('메뉴3')}>메뉴3</MenuItem> */}
+          {/* 추가적인 메뉴 아이템들 */}
+        </Menu>
       </SidebarContent>
     </SidebarContainer>
   );

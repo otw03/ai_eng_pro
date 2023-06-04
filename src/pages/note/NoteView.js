@@ -47,7 +47,7 @@ const NoteView = ({ notes, onEdit, deleteNote }) => {
   // 삭제 버튼
   const handleDeleteClick = () => {
     deleteNote(note.id);
-    navigate("/notes");
+    navigate("/main/note");
   };
 
   return (

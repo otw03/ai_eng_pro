@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   text-align: center;
@@ -50,20 +51,27 @@ const Button = styled.button`
   }
 `;
 
-const PasswordResetCodePage = () => {
-  const handleCodeSubmit = (e) => {
+const FindPasswordPage = () => {
+  const navigate = useNavigate();
+
+  const handleEmailSubmit = (e) => {
     e.preventDefault();
-    // 인증 코드 확인 처리 로직
-    console.log('비밀번호 인증 코드 확인');
+    // 비밀번호 찾기 처리 로직
+    console.log('비밀번호 찾기 - 이메일 전송');
+    navigate("/find-password/reset-code");
   };
 
   return (
     <Container>
-      <Title>비밀번호 인증 코드 입력</Title>
-      <Form onSubmit={handleCodeSubmit}>
+      <Title>비밀번호 찾기</Title>
+      <Form onSubmit={handleEmailSubmit}>
         <FormGroup>
-          <Label htmlFor="code">인증 코드</Label>
-          <Input type="text" id="code" name="code" placeholder="인증 코드를 입력하세요" />
+          <Label htmlFor="username">아이디</Label>
+          <Input type="text" id="username" name="username" placeholder="아이디를 입력하세요" />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="email">이메일</Label>
+          <Input type="email" id="email" name="email" placeholder="이메일을 입력하세요" />
         </FormGroup>
         <Button type="submit">확인</Button>
       </Form>
@@ -71,5 +79,5 @@ const PasswordResetCodePage = () => {
   );
 };
 
-export default PasswordResetCodePage;
+export default FindPasswordPage;
 

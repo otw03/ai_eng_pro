@@ -1,10 +1,14 @@
 import React from 'react';
-import SignupForm from './SignupForm';
+import SignupForm from '../../components/SignupForm';
+import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+
   const handleSignup = () => {
     // 회원가입 처리 로직
     console.log('회원가입');
+    navigate("/");
   };
 
   return (
