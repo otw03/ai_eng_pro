@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginForm from '../../components/LoginForm';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -29,9 +30,16 @@ const LoginPage = () => {
     navigate("/find-password");
   };
 
-  const handleKakaoLogin = () => {
+  const handleKakaoLogin = async () => {
     // 카카오 로그인 처리 로직
     console.log('카카오 로그인');
+    
+    try {
+      const response = await axios.get('auth/kakao');
+      window.location.href = response.data.redirectUri;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
