@@ -28,21 +28,21 @@
 
 // export default App;
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 // import Header from './components/Header';
 // import Sidebar from './components/Sidebar';
 // import ChatRoom from './pages/chat/ChatRoom';
-import FindIdPage from './pages/auth/FindIdPage';
-import FindPasswordPage from './pages/auth/FindPasswordPage';
-import LoginPage from './pages/auth/LoginPage';
-import Main from './pages/main/Main';
+import FindIdPage from "./pages/auth/FindIdPage";
+import FindPasswordPage from "./pages/auth/FindPasswordPage";
+import LoginPage from "./pages/auth/LoginPage";
+import Main from "./pages/main/Main";
 // import NoteEditor from './pages/note/NoteEditor';
 // import NoteList from './pages/note/NoteList';
 // import NoteView from './pages/note/NoteView';
-import PasswordResetCodePage from './pages/auth/PasswordResetCodePage';
-import PasswordResetPage from './pages/auth/PasswordResetPage';
-import SignUpPage from './pages/auth/SignUpPage';
+import PasswordResetCodePage from "./pages/auth/PasswordResetCodePage";
+import PasswordResetPage from "./pages/auth/PasswordResetPage";
+import SignUpPage from "./pages/auth/SignUpPage";
 
 function App() {
   return (
@@ -55,12 +55,18 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/find-id" element={<FindIdPage />} />
         <Route path="/find-password" element={<FindPasswordPage />} />
-        <Route path="/find-password/reset-code" element={<PasswordResetCodePage />} />
-        <Route path="/find-password/reset-code/reset-password" element={<PasswordResetPage />} />
-        
+        <Route
+          path="/find-password/reset-code"
+          element={<PasswordResetCodePage />}
+        />
+        <Route
+          path="/find-password/reset-code/reset-password"
+          element={<PasswordResetPage />}
+        />
+
         {/* 로그인 후 Main 페이지 라우팅 처리 */}
         <Route path="/main/*" element={<Main />} />
-        
+
         {/* <Route path="/chat" element={<ChatRoom />} />
         <Route path="/note" element={<NoteList />} /> */}
         {/* <Route path="/note/view/:noteId" element={<NoteView />} />
@@ -71,6 +77,3 @@ function App() {
 }
 
 export default App;
-
-
-
