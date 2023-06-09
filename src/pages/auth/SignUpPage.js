@@ -1,15 +1,30 @@
-import React from 'react';
-import SignupForm from '../../components/SignupForm';
+import React from "react";
+import SignupForm from "../../components/SignupForm";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SignupPage = () => {
   const navigate = useNavigate();
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     // 회원가입 처리 로직
-    console.log('회원가입');
-    navigate("/");
-  };
+    const data = {
+      username: "otw03",
+      password: "1234",
+      email: "otw03@naver.com",
+    };
+
+    console.log(data);
+      
+    try {
+      const response = await axios.post("http://localhost:8080/signup", data);
+      console.log(response.data);
+      console.log(response.data.message);
+      navigate("/login");
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  }
 
   return (
     <div>
@@ -20,4 +35,3 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
-

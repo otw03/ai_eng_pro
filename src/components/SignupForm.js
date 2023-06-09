@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+import axios from 'axios';
 
 const FormContainer = styled.div`
   max-width: 400px;
@@ -45,10 +47,37 @@ const Button = styled.button`
   }
 `;
 
-const SignupForm = ({ onSubmit }) => {
-  const handleSubmit = (e) => {
+const SignupForm = () => {
+
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    confirmPassword: '',
+    name: '',
+    email: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit();
+    console.log(formData);
+    try {
+      const response = await axios.post('/signup', formData);
+      console.log(response);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -57,23 +86,23 @@ const SignupForm = ({ onSubmit }) => {
       <form onSubmit={handleSubmit}>
         <FormGroup>
           <Label htmlFor="username">아이디</Label>
-          <Input type="text" id="username" name="username" placeholder="아이디을 입력하세요" />
+          <Input type="text" id="username" name="username" placeholder="아이디을 입력하세요" value={formData.username} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label htmlFor="password">비밀번호</Label>
-          <Input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" />
+          <Input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" value={formData.password} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label htmlFor="confirm-password">비밀번호 확인</Label>
-          <Input type="password" id="confirm-password" name="confirm-password" placeholder="비밀번호를 다시 입력하세요" />
+          <Input type="password" id="confirm-password" name="confirmPassword" placeholder="비밀번호를 다시 입력하세요" value={formData.confirmPassword} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="username">이름</Label>
-          <Input type="text" id="username" name="username" placeholder="이름을 입력하세요" />
+          <Label htmlFor="name">이름</Label>
+          <Input type="text" id="name" name="name" placeholder="이름을 입력하세요" value={formData.name} onChange={handleChange} />
         </FormGroup>
         <FormGroup>
           <Label htmlFor="email">이메일</Label>
-          <Input type="email" id="email" name="email" placeholder="이메일을 입력하세요" />
+          <Input type="email" id="email" name="email" placeholder="이메일을 입력하세요" value={formData.email} onChange={handleChange} />
         </FormGroup>
         <Button type="submit">가입하기</Button>
       </form>
@@ -82,6 +111,7 @@ const SignupForm = ({ onSubmit }) => {
 };
 
 export default SignupForm;
+
 
 
 

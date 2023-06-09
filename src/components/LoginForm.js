@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-
 const FormContainer = styled.div`
   max-width: 400px;
   margin: 0 auto;
@@ -77,7 +76,12 @@ const KakaoLoginButton = styled.button`
 `;
 
 const LoginForm = ({
+  username, 
+  setUsername,
+  password, 
+  setPassword,
   onLogin,
+
   onSignup,
   onForgotId,
   onForgotPw,
@@ -96,18 +100,22 @@ const LoginForm = ({
           <Label htmlFor="username">아이디</Label>
           <Input
             type="text"
+            value={username}
             id="username"
             name="username"
             placeholder="아이디를 입력하세요"
+            onChange={(e) => setUsername(e.target.value)}
           />
         </FormGroup>
         <FormGroup>
           <Label htmlFor="password">비밀번호</Label>
           <Input
             type="password"
+            value={password}
             id="password"
             name="password"
             placeholder="비밀번호를 입력하세요"
+            onChange={(e) => setPassword(e.target.value)}
           />
         </FormGroup>
         <Button type="submit">로그인</Button>
@@ -125,4 +133,3 @@ const LoginForm = ({
 };
 
 export default LoginForm;
-
