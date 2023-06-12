@@ -8,12 +8,8 @@ import NoteList from "../note/NoteList";
 import NoteEditor from "../note/NoteEditor";
 import NoteView from "../note/NoteView";
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate, } from "react-router-dom";
+import axios from "axios";
 
 const AppContainer = styled.div`
   display: flex;
@@ -41,7 +37,17 @@ const MainComponent = () => {
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('/logout');
+      if (response.status === 200) {
+        navigate("/");
+      } else {
+        alert('로그아웃하는 동안 오류가 발생했습니다. 다시 시도하십시오.');
+      }
+    } catch (error) {
+      console.error('로그아웃 오류:', error);
+    }
     console.log("로그아웃 이벤트 처리");
   };
 

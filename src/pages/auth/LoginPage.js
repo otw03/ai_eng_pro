@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LoginForm from "../../components/LoginForm";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+// import bcrypt from "bcrypt";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -10,37 +11,38 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-  
-    // console.log("유저id: ", username);
-    // console.log("비밀번호: ", password);
-  
-    // try {
-    //   const response = await axios.post("/login", {
-    //     username: username,
-    //     password: password,
-    //   });
-  
-    //   if (response.status === 200) {
-    //     console.log("로그인 성공");
-    //     navigate("/main");
-    //   } else {
-    //     console.log("로그인 실패");
-    //   }
-    // } catch (error) {
-    //   console.error("로그인 요청 중 오류가 발생했습니다.", error);
-  
-    //   if (error.response) {
-    //     // 서버로부터 응답이 있는 경우
-    //     if (error.response.status === 401) {
-    //       console.error("로그인 실패: 잘못된 사용자 이름 또는 비밀번호입니다.");
-    //     } else {
-    //       console.error(`서버에서 오류가 발생했습니다. (HTTP 상태 코드: ${error.response.status})`);
-    //     }
-    //   } else {
-    //     // 서버로부터 응답이 없는 경우
-    //     console.error("서버와 통신하는 데 문제가 발생했습니다.");
-    //   }
-    // }
+    console.log("유저id: ", username);
+    console.log("비밀번호: ", password);
+
+    try {
+      const response = await axios.post('/login', {
+        username: username,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        console.log("로그인 성공");
+        navigate("/main");
+      } else {
+        console.log("로그인 실패");
+      }
+    } catch (error) {
+      console.error("로그인 요청 중 오류가 발생했습니다.", error);
+
+      if (error.response) {
+        // 서버로부터 응답이 있는 경우
+        if (error.response.status === 401) {
+          console.error("로그인 실패: 잘못된 사용자 이름 또는 비밀번호입니다.");
+        } else {
+          console.error(
+            `서버에서 오류가 발생했습니다. (HTTP 상태 코드: ${error.response.status})`
+          );
+        }
+      } else {
+        // 서버로부터 응답이 없는 경우
+        console.error("서버와 통신하는 데 문제가 발생했습니다.");
+      }
+    }
   };
 
   const handleSignup = () => {
@@ -82,7 +84,6 @@ const LoginPage = () => {
         password={password}
         setPassword={setPassword}
         onLogin={handleLogin}
-
         onSignup={handleSignup}
         onForgotId={handleForgotId}
         onForgotPw={handleForgotPw}

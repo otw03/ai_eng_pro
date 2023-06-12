@@ -100,9 +100,9 @@ const LoginForm = ({
           <Label htmlFor="username">아이디</Label>
           <Input
             type="text"
-            value={username}
             id="username"
             name="username"
+            value={username}
             placeholder="아이디를 입력하세요"
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -111,9 +111,9 @@ const LoginForm = ({
           <Label htmlFor="password">비밀번호</Label>
           <Input
             type="password"
-            value={password}
             id="password"
             name="password"
+            value={password}
             placeholder="비밀번호를 입력하세요"
             onChange={(e) => setPassword(e.target.value)}
           />
