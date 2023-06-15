@@ -6,6 +6,8 @@ const UserSchema = new mongoose.Schema({
   password: String,
   name: String,
   email: String,
+  snsId: { type: String, unique: true, sparse: true },
+  provider: { type: String, default: "local" },
   // confirmPassword: String,
 });
 

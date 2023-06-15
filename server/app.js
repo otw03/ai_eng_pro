@@ -117,23 +117,34 @@ passport.deserializeUser(User.deserializeUser());
 passport.use(
   new KakaoStrategy(
     {
-      clientID: "KAKAO_APP_KEY",
+      clientID: process.env.KAKAO_APP_KEY,
       clientSecret: "", // clientSecret을 사용하지 않는다면 넘기지 말거나 빈 스트링을 넘길 것
-      callbackURL: "http://localhost:8081/auth/kakao",
+      callbackURL: "http://localhost:8080/oauth",
     },
-    (accessToken, refreshToken, profile, done) => {
-      // authorization 에 성공했을때의 액션
-      console.log(`accessToken : ${accessToken}`);
-      console.log(`사용자 profile: ${JSON.stringify(profile._json)}`);
-      let user = {
-        profile: profile._json,
-        accessToken: accessToken,
-      };
-      return done(null, user);
+    async (accessToken, refreshToken, profile, done) => {
+      // console.log("kakao profile", profile);
+      try {
+        const exUser = await User.findOne({
+          snsId: profile.id, provider: "kakao",
+        });
+        if (exUser) {
+          done(null, exUser);
+        } else {
+          const newUser = await User.create({
+            email: profile._json?.kakao_account?.email,
+            name: profile.username,
+            snsId: profile.id,
+            provider: "kakao",
+          });
+          done(null, newUser);
+        }
+      } catch (error) {
+        console.error(error);
+        done(error);
+      }
     }
   )
 );
-
 
 // 회원가입
 app.post("/signup", async (req, res, next) => {
@@ -174,6 +185,7 @@ app.post("/signup", async (req, res, next) => {
   }
 });
 
+
 // 로컬 전략 설정
 passport.use(
   new LocalStrategy(
@@ -210,7 +222,11 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log(user);
+  console.log(`
+  ==================================
+  user: ${user}
+  ==================================
+  `);
   done(null, user.id);
 });
 
@@ -227,7 +243,7 @@ passport.deserializeUser((id, done) => {
 app.post("/login", (req, res, next) => {
   console.log(req.body);
   passport.authenticate('local', (err, user, info) => {
-    // console.log(user);
+    console.log(user);
     // 오류 처리
     if (err) {
       return next(err);
@@ -266,6 +282,50 @@ app.get("/auth/kakao", passport.authenticate("kakao"), function (req, res) {
   res.send(
     `id : ${req.user.profile.id} / accessToken : ${req.user.accessToken} `
   );
+});
+
+app.get('/kakao', passport.authenticate('kakao', {
+  failureRedirect: '/', // 실패했을 경우 리다이렉트 경로
+})
+
+);
+
+app.get('/oauth', passport.authenticate('kakao', {
+  failureRedirect: '/?error=카카오로그인 실패',
+}), 
+  (req, res) => {
+    res.redirect('http://localhost:8081/main'); // 다 완료되면 리다이렉트 URL
+  }
+);
+
+// 아이디(사용자 이름) 찾기 라우터 구현
+app.post("/find-id", async(req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(400).json({ message: "등록된 이메일이 없습니다." });
+    }
+    // 아이디 이메일 전송 로직
+
+    res.status(200).json({ message: "아이디가 이메일로 전송되었습니다." });
+  } catch (err) {
+    res.status(500).json({err});
+  }
+});
+
+// 비밀번호 찾기 라우터 구현
+app.post("/find-password", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.body.username, email: req.body.email });
+    if (!user) {
+      return res.status(400).json({ message: "등록된 아이디 또는 이메일이 없습니다." });
+    }
+    // 아래에 비밀번호 재설정 링크 또는 비밀번호 생성 및 이메일 전송 로직
+
+    res.status(200).json({ message: "비밀번호 재설정 링크가 이메일로 전송되었습니다." });
+  } catch (err) {
+    res.status(500).json({err});
+  }
 });
 
 const PORT = process.env.PORT || 8080;

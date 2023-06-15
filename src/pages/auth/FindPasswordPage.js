@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const Container = styled.div`
   text-align: center;
@@ -52,11 +53,22 @@ const Button = styled.button`
 `;
 
 const FindPasswordPage = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+
   const navigate = useNavigate();
 
-  const handleEmailSubmit = (e) => {
+  const handleEmailSubmit = async (e) => {
     e.preventDefault();
     // 비밀번호 찾기 처리 로직
+    try {
+      const response = await axios.post("/find-password", { email });
+      if (response.status === 200) {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      alert(error.response.data.message);
+    }
     console.log('비밀번호 찾기 - 이메일 전송');
     navigate("/find-password/reset-code");
   };
@@ -67,11 +79,11 @@ const FindPasswordPage = () => {
       <Form onSubmit={handleEmailSubmit}>
         <FormGroup>
           <Label htmlFor="username">아이디</Label>
-          <Input type="text" id="username" name="username" placeholder="아이디를 입력하세요" />
+          <Input type="text" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="아이디를 입력하세요" />
         </FormGroup>
         <FormGroup>
           <Label htmlFor="email">이메일</Label>
-          <Input type="email" id="email" name="email" placeholder="이메일을 입력하세요" />
+          <Input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)}placeholder="가입한 이메일을 입력하세요" />
         </FormGroup>
         <Button type="submit">확인</Button>
       </Form>

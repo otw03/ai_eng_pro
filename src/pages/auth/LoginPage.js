@@ -71,7 +71,7 @@ const LoginPage = () => {
     // } catch (error) {
     //   console.error(error);
     // }
-    window.location.href = "http://localhost:8080/auth/kakao";
+    window.location.href = "http://localhost:8080/kakao";
     console.log("카카오 로그인");
   };
 
