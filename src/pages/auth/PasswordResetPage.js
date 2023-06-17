@@ -1,6 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import styled from "styled-components";
+import { useNavigate, useLocation  } from "react-router-dom";
+import axios from 'axios';
 
 const Container = styled.div`
   text-align: center;
@@ -52,13 +53,42 @@ const Button = styled.button`
 `;
 
 const PasswordResetPage = () => {
-  const navigate = useNavigate();
+  const [newPassword, setNewPassword] = useState('');
+  const [ConfirmNewPassword, setConfirmNewPassword] = useState('');
+  const [userName, setUserName] = useState("");
 
-  const handleResetSubmit = (e) => {
+  const navigate = useNavigate();
+  const location = useLocation(); // 위치를 가져옵니다.
+
+  // 비밀번호 인증 코드 입력 페이지에서 전달 받은 userName를 설정
+  useEffect(() => {
+    console.log(location);
+    console.log(location.state);    
+    console.log(location.state.userName);
+    if (location.state && location.state.userName) {
+      setUserName(location.state.userName);
+    }
+  }, [location]);
+
+  const handleResetSubmit = async (e) => {
     e.preventDefault();
     // 비밀번호 재설정 처리 로직
-    console.log('비밀번호 재설정');
-    navigate("/");
+    if(newPassword === ConfirmNewPassword) {
+      try {
+          const response = await axios.post('/find-password/reset-code/reset-password', { newPassword, userName });
+          if (response.status === 200) {
+            alert(response.data.message);
+            console.log("비밀번호 재설정");
+            navigate("/");
+          }
+      } catch (error) {
+          console.log(error);
+          alert("비밀번호 변경에 실패했습니다.");
+      }
+    } else {
+      alert("비밀번호가 일치하지 않습니다. 다시 입력하세요.");
+    }   
+
   };
 
   return (
@@ -67,11 +97,23 @@ const PasswordResetPage = () => {
       <Form onSubmit={handleResetSubmit}>
         <FormGroup>
           <Label htmlFor="password">새 비밀번호</Label>
-          <Input type="password" id="password" name="password" placeholder="새 비밀번호를 입력하세요" />
+          <Input
+            type="password"
+            id="password"
+            name="password"
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="새 비밀번호를 입력하세요"
+          />
         </FormGroup>
         <FormGroup>
           <Label htmlFor="confirmPassword">비밀번호 확인</Label>
-          <Input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 한번 더 입력하세요" />
+          <Input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            placeholder="비밀번호를 한번 더 입력하세요"
+          />
         </FormGroup>
         <Button type="submit">확인</Button>
       </Form>
@@ -80,4 +122,3 @@ const PasswordResetPage = () => {
 };
 
 export default PasswordResetPage;
-

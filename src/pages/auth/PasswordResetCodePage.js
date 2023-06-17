@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const Container = styled.div`
   text-align: center;
@@ -52,13 +53,27 @@ const Button = styled.button`
 `;
 
 const PasswordResetCodePage = () => {
+  const [verificationCode, setVerificationCode] = useState('');
+  
   const navigate = useNavigate();
 
-  const handleCodeSubmit = (e) => {
+  const handleCodeSubmit = async (e) => {
     e.preventDefault();
     // 인증 코드 확인 처리 로직
-    console.log('비밀번호 인증 코드 확인');
-    navigate("/find-password/reset-code/reset-password");
+    try {
+      const response = await axios.post('/find-password/reset-code', { verificationCode });
+      console.log(response.data);
+      if (response.status === 200) {
+        alert(`${response.data.username} ${response.data.message}`);
+        console.log('비밀번호 인증 코드 확인');
+        navigate("/find-password/reset-code/reset-password", {
+          state: { userName: response.data.username },
+        });
+      }
+    } catch (error) {
+        alert(error.response.data.message);
+        console.log(error);
+    }
   };
 
   return (
@@ -67,7 +82,7 @@ const PasswordResetCodePage = () => {
       <Form onSubmit={handleCodeSubmit}>
         <FormGroup>
           <Label htmlFor="code">인증 코드</Label>
-          <Input type="text" id="code" name="code" placeholder="인증 코드를 입력하세요" />
+          <Input type="text" id="code" name="code" onChange={(e) => setVerificationCode(e.target.value)} placeholder="인증 코드를 입력하세요" />
         </FormGroup>
         <Button type="submit">확인</Button>
       </Form>

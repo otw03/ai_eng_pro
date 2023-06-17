@@ -8,6 +8,15 @@ const UserSchema = new mongoose.Schema({
   email: String,
   snsId: { type: String, unique: true, sparse: true },
   provider: { type: String, default: "local" },
+  veriCode: {
+    type: String,
+    default: null
+  },
+  veriCodeExpiresIn: {
+    type: Date,
+    default: null
+  }
+  // resetPasswordTokenExpires: Date,
   // confirmPassword: String,
 });
 
