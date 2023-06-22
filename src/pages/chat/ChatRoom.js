@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const ChatContainer = styled.div`
   width: calc(100% - ${({ sidebarWidth }) => sidebarWidth}px);
@@ -55,9 +56,22 @@ const ChatRoom = ({ sidebarWidth = 200 }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (newMessage.trim() !== '') {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessages((prevMessages) => [...prevMessages, { sender: '나', content: newMessage }]);
+
+      try {
+        const response = await axios.post('/chat', { message: newMessage });
+        const aiMessage = response.data.message;
+        console.log(aiMessage);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: '챗봇', content: aiMessage },
+        ]);
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+      
       setNewMessage('');
     }
   };
@@ -67,8 +81,8 @@ const ChatRoom = ({ sidebarWidth = 200 }) => {
       <ChatMessages>
         {messages.map((message, index) => (
           <Message key={index}>
-            <Sender>나: </Sender>
-            <Text>{message}</Text>
+            <Sender>{message.sender}: </Sender>
+            <Text>{message.content}</Text>
           </Message>
         ))}
       </ChatMessages>

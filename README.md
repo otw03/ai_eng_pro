@@ -1,5 +1,5 @@
 개발 문서  
-[OpenAI API활용한 AI 챗봇 만들기 단계 문서](./documents/openAI_API_document.md)  
+[OpenAI API활용한 AI 챗봇 만들기 개발 프로세스 문서](./documents/openAI_API_Process_document.md)  
 
 <!-- # Getting Started with Create React App
 

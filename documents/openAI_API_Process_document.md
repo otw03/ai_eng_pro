@@ -1,4 +1,4 @@
-# openAI API documents
+# OpenAI API 활용한 AI 챗봇 만들기 개발 프로세스 문서
 
 ### React, Node.js, Express, Mongoose, 그리고 OpenAI API를 사용한 AI 챗봇을 만들기
 

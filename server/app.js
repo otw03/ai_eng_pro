@@ -59,7 +59,11 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+
 const mongoose = require("mongoose");
+const User = require("./models/User");
+const Message = require('./models/Message');
+
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
@@ -69,10 +73,11 @@ const bodyParser = require('body-parser');
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
-const User = require("./models/User");
+const axios = require("axios");
 
 const nodemailer = require('nodemailer'); // 메일발송 --> app.use()로 추가설정 필요 없음.
 
+const openai = require('openai');
 
 const app = express();
 app.use(cors());
@@ -365,6 +370,40 @@ async function sendVerificationCodeEmail(email, code) {
   const text = `인증 코드: ${code}`;
   await sendEmail(email, subject, text);
 }
+
+
+// OpenAI API
+app.post('/chat', async (req, res) => {
+
+  const userMessage = req.body.message;
+  console.log(userMessage);
+
+  // OpenAI API 호출
+  const { Configuration, OpenAIApi } = require("openai");
+
+  const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
+  try {
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: userMessage },
+      ],
+      temperature: 0.7,
+      
+    });
+    console.log(completion.data.choices[0].message);
+
+    res.json({ message: completion.data.choices[0].message.content });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 // 비밀번호 찾기 - 인증 코드 발송 라우터 구현
 app.post("/find-password", async (req, res) => {
