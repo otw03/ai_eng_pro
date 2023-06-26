@@ -62,7 +62,7 @@ const FindPasswordPage = () => {
     e.preventDefault();
     // 비밀번호 찾기 처리 로직
     try {
-      const response = await axios.post("/find-password", { email, username });
+      const response = await axios.post("/find/find-password", { email, username });
       if (response.status === 200) {
         alert(response.data.message);
         console.log("비밀번호 찾기 - 이메일 전송");

@@ -64,7 +64,7 @@ const FindIdPage = () => {
     e.preventDefault();
     // 아이디 찾기 처리 로직
     try {
-      const response = await axios.post("/find-id", { email });
+      const response = await axios.post("/find/find-id", { email });
       if (response.status === 200) {
         alert(response.data.message);
       }

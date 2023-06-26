@@ -3,24 +3,16 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const mongoose = require("mongoose");
-const User = require("./models/User");
-const Message = require('./models/Message');
 
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const bodyParser = require('body-parser');
 
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-
 const passport = require("passport");
-
-const axios = require("axios");
-// Import other required modules, middleware, and database connection...
 
 const authRouter = require('./routes/auth');
 const emailRouter = require('./routes/email');
-// const userRouter = require('./routes/user');
+const chatRouter = require("./routes/chat");
 
 const app = express();
 
@@ -59,9 +51,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use('/', userRouter);
 app.use('/auth', authRouter);
 app.use('/find', emailRouter);
+app.use('/chat', chatRouter);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

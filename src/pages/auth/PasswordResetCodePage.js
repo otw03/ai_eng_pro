@@ -61,7 +61,7 @@ const PasswordResetCodePage = () => {
     e.preventDefault();
     // 인증 코드 확인 처리 로직
     try {
-      const response = await axios.post('/find-password/reset-code', { verificationCode });
+      const response = await axios.post('/find/find-password/reset-code', { verificationCode });
       console.log(response.data);
       if (response.status === 200) {
         alert(`${response.data.username} ${response.data.message}`);

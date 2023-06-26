@@ -75,7 +75,7 @@ const PasswordResetPage = () => {
     // 비밀번호 재설정 처리 로직
     if(newPassword === ConfirmNewPassword) {
       try {
-          const response = await axios.post('/find-password/reset-code/reset-password', { newPassword, userName });
+          const response = await axios.post('/find/find-password/reset-code/reset-password', { newPassword, userName });
           if (response.status === 200) {
             alert(response.data.message);
             console.log("비밀번호 재설정");
