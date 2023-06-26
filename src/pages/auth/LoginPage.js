@@ -15,7 +15,7 @@ const LoginPage = () => {
     console.log("비밀번호: ", password);
 
     try {
-      const response = await axios.post('/login', {
+      const response = await axios.post('/auth/login', {
         username: username,
         password: password,
       });
@@ -71,7 +71,7 @@ const LoginPage = () => {
     // } catch (error) {
     //   console.error(error);
     // }
-    window.location.href = "http://localhost:8080/kakao";
+    window.location.href = "http://localhost:8080/auth/kakao";
     console.log("카카오 로그인");
   };
 

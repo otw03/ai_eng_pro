@@ -39,7 +39,7 @@ const MainComponent = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get('/logout');
+      const response = await axios.get('/auth/logout');
       if (response.status === 200) {
         navigate("/");
       } else {

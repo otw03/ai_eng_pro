@@ -72,7 +72,7 @@ const SignupForm = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const response = await axios.post('/signup', formData);
+      const response = await axios.post('/auth/signup', formData);
       console.log(response);
       navigate("/");
     } catch (error) {
