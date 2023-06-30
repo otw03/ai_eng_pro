@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -50,6 +50,11 @@ const MainComponent = () => {
     }
     console.log("로그아웃 이벤트 처리");
   };
+
+
+  // 채팅방 상태관리
+  const [chatRooms, setChatRooms] = useState([]);
+  console.log(chatRooms);
 
   // 노트 추가 로직
   const [notes, setNotes] = useState([
@@ -107,23 +112,12 @@ const MainComponent = () => {
     <AppContainer>
       <Header username="오태원" onLogout={handleLogout} />
       <MainContainer>
-        <Sidebar ref={sidebarRef} />
-        {/* <ChatRoomWrapper> */}
-        {/* 사이드바의 너비를 참조하여, 채팅방 컴포넌트의 너비를 동적으로 변경해주는 역할. 이를 통해 사이드바의 크기가 변경되면, 채팅방의 너비도 상응하는 크기로 자동으로 변경해줌 */}
-        {/* ChatRoom 컴포넌트에게 sidebarWidth라는 prop을 전달하고 있음 */}
-        {/* <ChatRoom
-          sidebarWidth={
-            sidebarRef.current ? sidebarRef.current.clientWidth : 200
-          }
-        /> */}
-        {/* </ChatRoomWrapper> */}
-
+        <Sidebar ref={sidebarRef} chatRooms={chatRooms} setChatRooms={setChatRooms} />
         {
           <Routes>
-            {/* Route에 "/chat" 및 "/note" 경로와 컴포넌트를 추가 */}
-            <Route path="/chat" element={<ChatRoom sidebarWidth={
-            sidebarRef.current ? sidebarRef.current.clientWidth : 200
-          } />} />
+            {chatRooms.map((room) => (
+              <Route key={room.id} path={`/chat/${room.id}`} element={<ChatRoom />} />
+            ))}
             <Route
               path="/note"
               element={<NoteList notes={notes} deleteNote={deleteNote} createNote={createNote} />}

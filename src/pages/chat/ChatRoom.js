@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const ChatContainer = styled.div`
-  width: calc(100% - ${({ sidebarWidth }) => sidebarWidth}px);
+  width: 100%;
   height: 100%;
   padding: 20px;
   display: flex;
@@ -52,36 +53,58 @@ const ChatButton = styled.button`
   }
 `;
 
-const ChatRoom = ({ sidebarWidth = 200 }) => {
+const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() !== '') {
-      setMessages((prevMessages) => [...prevMessages, { sender: '나', content: newMessage }]);
+  const { id } = useParams();
 
-      try {
-        const response = await axios.post('/chat', { message: newMessage });
-        const aiMessage = response.data.message;
-        console.log(aiMessage);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: '챗봇', content: aiMessage },
-        ]);
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
-      
-      setNewMessage('');
+  // 채팅방 메시지 가져오기
+  const fetchChatRoomMessages = async () => {
+    try {
+      const response = await axios.get(`/chat/${id}/messages`);
+      const fetchedMessages = response.data.conversation;
+      console.log(fetchedMessages);
+      setMessages(fetchedMessages);
+    } catch (error) {
+      console.error('Failed to fetch chat room messages:', error);
     }
   };
 
+  useEffect(() => {
+    fetchChatRoomMessages();
+  }, [id]);
+
+  const handleSendMessage = async () => {
+    // if (newMessage.trim() !== '') {
+    //   setMessages((prevMessages) => [...prevMessages, { role: 'user', content: newMessage }]);
+
+    //   try {
+    //     const response = await axios.post('/chat', { message: newMessage });
+    //     const aiMessage = response.data.message;
+    //     console.log(aiMessage);
+    //     setMessages((prevMessages) => [
+    //       ...prevMessages,
+    //       { role: 'assistant', content: aiMessage },
+    //     ]);
+
+    //     // 채팅방에 메시지 저장
+    //     await axios.post(`/chat/room/${id}/messages`, { message: { role: "user", content: newMessage } });
+    //     await axios.post(`/chat/room/${id}/messages`, { message: { role: "assistant", content: aiMessage } });
+    //   } catch (error) {
+    //     console.error('Error sending message:', error);
+    //   }
+      
+    //   setNewMessage('');
+    // }
+  };
+
   return (
-    <ChatContainer sidebarWidth={sidebarWidth}>
+    <ChatContainer>
       <ChatMessages>
         {messages.map((message, index) => (
           <Message key={index}>
-            <Sender>{message.sender}: </Sender>
+            <Sender>{message.role}: </Sender>
             <Text>{message.content}</Text>
           </Message>
         ))}
