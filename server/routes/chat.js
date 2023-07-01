@@ -19,7 +19,7 @@ async function summarize(answer) {
     messages: [
       {
         role: "user",
-        content: `Summarize this in Korean ###\n${answer}\n###`,
+        content: `Summarize this ###\n${answer}\n###`,
       },
     ],
     max_tokens: 500, // 토큰 수를 제한
@@ -74,16 +74,16 @@ router.delete("/:id", async (req, res) => {
 // 채팅 메시지 저장 및 읽어오기
 router.post('/:id/messages', async (req, res) => {
   console.log(req.params);
-  // const chatRoom = await ChatRoom.findById(req.params.id);
-  // if (!chatRoom) {
-  //     res.status(404).json({ error: "Chat room not found" });
-  //     return;
-  // }
+  const chatRoom = await ChatRoom.findById(req.params.id);
+  if (!chatRoom) {
+      res.status(404).json({ error: "Chat room not found" });
+      return;
+  }
+  console.log(chatRoom.conversation);
+  chatRoom.conversation.push(req.body.message);
+  await chatRoom.save();
 
-  // chatRoom.conversation.push(req.body.message);
-  // await chatRoom.save();
-
-  // res.status(201).json({ message: 'Message saved successfully.' });
+  res.status(201).json({ message: 'Message saved successfully.' });
 });
 
 router.get('/:id/messages', async (req, res) => {
@@ -129,7 +129,12 @@ router.post("/", async (req, res) => {
     console.log("Conversation history after response:", conversationHistory);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    if (err.response && err.response.status === 429) {
+      // 요청 수 초과시 처리
+      return res.status(429).json({ error: "Too many requests" });
+    } else {
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 });
 

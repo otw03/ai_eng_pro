@@ -115,9 +115,10 @@ const MainComponent = () => {
         <Sidebar ref={sidebarRef} chatRooms={chatRooms} setChatRooms={setChatRooms} />
         {
           <Routes>
-            {chatRooms.map((room) => (
+            {/* {chatRooms.map((room) => (
               <Route key={room.id} path={`/chat/${room.id}`} element={<ChatRoom />} />
-            ))}
+            ))} */}
+            <Route path={`/chat/:id`} element={<ChatRoom />} />
             <Route
               path="/note"
               element={<NoteList notes={notes} deleteNote={deleteNote} createNote={createNote} />}

@@ -25,6 +25,7 @@ const CreateBtn = styled.button`
 
 const DeleteBtn = styled.button`
   background-color: #f44336;
+  margin-right: 12px;
   padding: 5px;
   border: none;
   border-radius: 4px;
@@ -35,6 +36,11 @@ const DeleteBtn = styled.button`
 const SubMenu = styled.ul`
   list-style-type: none;
   display: ${({ isExpanded }) => (isExpanded ? 'block' : 'none')};
+
+  li {
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`

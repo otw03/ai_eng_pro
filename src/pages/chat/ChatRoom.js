@@ -61,6 +61,7 @@ const ChatRoom = () => {
 
   // 채팅방 메시지 가져오기
   const fetchChatRoomMessages = async () => {
+    console.log(id);
     try {
       const response = await axios.get(`/chat/${id}/messages`);
       const fetchedMessages = response.data.conversation;
@@ -76,27 +77,27 @@ const ChatRoom = () => {
   }, [id]);
 
   const handleSendMessage = async () => {
-    // if (newMessage.trim() !== '') {
-    //   setMessages((prevMessages) => [...prevMessages, { role: 'user', content: newMessage }]);
+    if (newMessage.trim() !== '') {
+      setMessages((prevMessages) => [...prevMessages, { role: 'user', content: newMessage }]);
 
-    //   try {
-    //     const response = await axios.post('/chat', { message: newMessage });
-    //     const aiMessage = response.data.message;
-    //     console.log(aiMessage);
-    //     setMessages((prevMessages) => [
-    //       ...prevMessages,
-    //       { role: 'assistant', content: aiMessage },
-    //     ]);
+      try {
+        const response = await axios.post('/chat', { message: newMessage });
+        const aiMessage = response.data.message;
+        console.log(aiMessage);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: 'assistant', content: aiMessage },
+        ]);
 
-    //     // 채팅방에 메시지 저장
-    //     await axios.post(`/chat/room/${id}/messages`, { message: { role: "user", content: newMessage } });
-    //     await axios.post(`/chat/room/${id}/messages`, { message: { role: "assistant", content: aiMessage } });
-    //   } catch (error) {
-    //     console.error('Error sending message:', error);
-    //   }
+        // 채팅방에 메시지 저장
+        await axios.post(`/chat/${id}/messages`, { message: { role: "user", content: newMessage } });
+        await axios.post(`/chat/${id}/messages`, { message: { role: "assistant", content: aiMessage } });
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
       
-    //   setNewMessage('');
-    // }
+      setNewMessage('');
+    }
   };
 
   return (
