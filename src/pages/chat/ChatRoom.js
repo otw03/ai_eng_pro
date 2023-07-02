@@ -67,6 +67,7 @@ const ChatRoom = () => {
       const fetchedMessages = response.data.conversation;
       console.log(fetchedMessages);
       setMessages(fetchedMessages);
+      console.log(messages);
     } catch (error) {
       console.error('Failed to fetch chat room messages:', error);
     }
@@ -81,9 +82,14 @@ const ChatRoom = () => {
       setMessages((prevMessages) => [...prevMessages, { role: 'user', content: newMessage }]);
 
       try {
-        const response = await axios.post('/chat', { message: newMessage });
+
+      // const delayTime = 2000;
+      // setTimeout(async () => {
+
+        const response = await axios.post(`/chat/${id}`, { message: newMessage });
         const aiMessage = response.data.message;
         console.log(aiMessage);
+        console.log("response.data", response.data);
         setMessages((prevMessages) => [
           ...prevMessages,
           { role: 'assistant', content: aiMessage },
@@ -92,6 +98,9 @@ const ChatRoom = () => {
         // 채팅방에 메시지 저장
         await axios.post(`/chat/${id}/messages`, { message: { role: "user", content: newMessage } });
         await axios.post(`/chat/${id}/messages`, { message: { role: "assistant", content: aiMessage } });
+
+      // }, delayTime);
+
       } catch (error) {
         console.error('Error sending message:', error);
       }

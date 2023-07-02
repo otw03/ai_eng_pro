@@ -10,8 +10,6 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const conversationHistory = [];
-
 // 요약하기 함수
 async function summarize(answer) {
   const completion = await openai.createChatCompletion({
@@ -19,12 +17,12 @@ async function summarize(answer) {
     messages: [
       {
         role: "user",
-        content: `Summarize this ###\n${answer}\n###`,
+        content: `Summarize this in English ###\n${answer}\n###`,
       },
     ],
     max_tokens: 500, // 토큰 수를 제한
   });
-  console.log(completion.data.choices[0].message);
+  console.log("요약하기 함수 결과 completion.data.choices[0].message: ", completion.data.choices[0].message);
 
   return completion.data.choices[0].message.content;
 }
@@ -71,7 +69,7 @@ router.delete("/:id", async (req, res) => {
   res.json({ success: true });
 });
 
-// 채팅 메시지 저장 및 읽어오기
+// 채팅 메시지 저장
 router.post('/:id/messages', async (req, res) => {
   console.log(req.params);
   const chatRoom = await ChatRoom.findById(req.params.id);
@@ -80,12 +78,15 @@ router.post('/:id/messages', async (req, res) => {
       return;
   }
   console.log(chatRoom.conversation);
+
   chatRoom.conversation.push(req.body.message);
   await chatRoom.save();
+  console.log("채팅 기록 저장된 후 DB: ", chatRoom);
 
   res.status(201).json({ message: 'Message saved successfully.' });
 });
 
+// 채팅 메시지 가져오기
 router.get('/:id/messages', async (req, res) => {
   const chatRoom = await ChatRoom.findById(req.params.id);
   if (!chatRoom) {
@@ -97,27 +98,38 @@ router.get('/:id/messages', async (req, res) => {
 
 
 /* ai챗봇 대화 */
-router.post("/", async (req, res) => {
+router.post('/:id', async (req, res) => {
   const userMessage = req.body.message;
-  console.log("Received message from user:", userMessage);
+  console.log("1 Received message from user:", userMessage);
+  console.log("2: ", req.params.id);
+  // 해당 id와 일치하는 DB의 데이터를 찾고
+  const chatRoom = await ChatRoom.findById(req.params.id);
+  console.log("3: ",chatRoom.summarizedConversationHistory);
+
+
+  // 초기 conversationHistory를 DB에서 가져온 요약 대화 기록으로 설정
+  const conversationHistory = chatRoom.summarizedConversationHistory
+  ? [...chatRoom.summarizedConversationHistory]
+  : [];
+  console.log("3-2: ", conversationHistory);
 
   conversationHistory.push({ role: "user", content: userMessage });
-  console.log(conversationHistory);
+  console.log("4: ",conversationHistory);
 
   // 기본 메시지
   const messages = [
-    { role: "system", content: "You are a helpful assistant." },
+    { role: "system", content: "You are a helpful assistant Please answer only in English." },
     ...conversationHistory,
   ];
-  console.log(messages);
-  console.log("Current conversation history:", conversationHistory);
+  console.log("5: ",messages);
+  console.log("6 Current conversation history:", conversationHistory);
 
   try {
     const answer = await sendQuestion(messages);
-    console.log("Answer:", answer);
+    console.log("7 Answer:", answer);
 
     const summarized = await summarize(answer);
-    console.log("Summarized:", summarized);
+    console.log("8 Summarized:", summarized);
 
     conversationHistory.push({
       role: "assistant",
@@ -126,7 +138,10 @@ router.post("/", async (req, res) => {
 
     res.json({ message: answer });
 
-    console.log("Conversation history after response:", conversationHistory);
+    console.log("9 Conversation history after response:", conversationHistory);
+    // DB에 요약된 응답이 포함된 대화 기록 저장
+    chatRoom.summarizedConversationHistory = conversationHistory;
+    chatRoom.save();
   } catch (err) {
     console.error(err);
     if (err.response && err.response.status === 429) {

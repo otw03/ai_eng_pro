@@ -8,6 +8,7 @@ const chatRoomSchema = new mongoose.Schema({
       content: String,
     },
   ],
+  summarizedConversationHistory: { type: Object },
   createdAt: { type: Date, default: Date.now },
 });
 
