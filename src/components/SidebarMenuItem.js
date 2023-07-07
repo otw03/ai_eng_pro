@@ -47,8 +47,10 @@ const StyledNavLink = styled(NavLink)`
   text-decoration: none;
 `;
 
-const SidebarMenuItem = ({ title, itemList, onCreateChatRoom, onDeleteChatRoom }) => {
+const SidebarMenuItem = ({ title, itemList, onCreateChatRoom, onDeleteChatRoom, deleteNote, createNote }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  console.log(itemList);
 
   const handleToggleMenu = event => {
     event.stopPropagation();
@@ -57,7 +59,7 @@ const SidebarMenuItem = ({ title, itemList, onCreateChatRoom, onDeleteChatRoom }
   };
 
   // 채팅방 생성
-  const handleCreateChatRoom = event => {
+  const handleCreateChatRoom = (event) => {
     event.stopPropagation();
     if (onCreateChatRoom) {
       onCreateChatRoom();
@@ -73,20 +75,41 @@ const SidebarMenuItem = ({ title, itemList, onCreateChatRoom, onDeleteChatRoom }
     }
   };
 
+    // 노트 생성
+    const handleCreateNote = (event) => {
+      event.stopPropagation();
+      if (createNote) {
+        createNote();
+      }
+    };
+
+  // 노트 삭제
+  const handleDeleteNote = (event, noteId) => {
+    event.stopPropagation();
+    console.log(noteId);
+    if (deleteNote) {
+      deleteNote(noteId);
+    }
+  };
 
   return (
     <>
       <MenuItem onClick={handleToggleMenu}>
+      <StyledNavLink
+        to={title === "ChatRoom" ? "/main/chat" : "/main/note"}
+        isActive={() => false}
+      >
         {title}
-        <CreateBtn onClick={handleCreateChatRoom}>+</CreateBtn>
+      </StyledNavLink>
+        <CreateBtn onClick={(event) => {handleCreateChatRoom(event); handleCreateNote(event);} } >+</CreateBtn>
       </MenuItem>
         <SubMenu isExpanded={isExpanded}>
           {itemList.map(item => (
             <li key={item.id}>
               <StyledNavLink to={`/main/${item.type}/${item.id}`}>
-                {item.name}
+                {item.title}
               </StyledNavLink>
-              <DeleteBtn onClick={(event) => handleDeleteChatRoom(event, item.id)}>
+              <DeleteBtn onClick={(event) => {handleDeleteChatRoom(event, item.id); handleDeleteNote(event, item.id);}}>
                 -
               </DeleteBtn>
             </li>

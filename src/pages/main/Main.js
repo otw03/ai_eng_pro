@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -57,18 +57,17 @@ const MainComponent = () => {
   console.log(chatRooms);
 
   // 노트 추가 로직
-  const [notes, setNotes] = useState([
-    { id: 1, title: "Note 1", content: "content1" },
-    { id: 2, title: "Note 2", content: "content2" },
-  ]);
+  const [notes, setNotes] = useState([]);
 
   // `noteId`, `noteTitle`, `noteContent` 상태 관리
   const [noteId, setNoteId] = useState(null);
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
 
-  const deleteNote = (id) => {
+  // 노트 삭제
+  const deleteNote = async (id) => {
     setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+    await axios.delete(`/note/${id}`);
   };
 
   // 노트 추가 버튼 클릭 로직
@@ -78,20 +77,27 @@ const MainComponent = () => {
   };
 
   // 노트 저장 수정
-  const saveNote = (id, title, content) => {
+  const saveNote = async (id, title, content) => {
     if (id) {
+      const response = await axios.put(`/note/${id}`, { title, content });
+      console.log(id);
+      console.log(response.data)
       const updatedNotes = notes.map((note) => {
         if (note.id === id) {
-          return { ...note, title, content };
+          return { ...note, title, content, type: 'note'};
         }
         return note;
       });
-      // console.log("업데이트 됨");
+      console.log(id, title, content);
+      console.log("업데이트 됨");
       setNotes(updatedNotes);
     } else {
-      const newNote = { id: Date.now(), title, content };
+      const response = await axios.post("/note", { title, content });
+      console.log(response.data);
+      const newNote = { id: response.data._id, title, content, type: 'note' };
       setNotes([...notes, newNote]);
-      // console.log("새로 추가 됨");
+      console.log("새로 추가 됨");
+      console.log(notes);
     }
     navigate("/main/note");
   };
@@ -112,19 +118,17 @@ const MainComponent = () => {
     <AppContainer>
       <Header username="오태원" onLogout={handleLogout} />
       <MainContainer>
-        <Sidebar ref={sidebarRef} chatRooms={chatRooms} setChatRooms={setChatRooms} />
+        <Sidebar ref={sidebarRef} chatRooms={chatRooms} setChatRooms={setChatRooms} notes={notes} setNotes={setNotes}  deleteNote={deleteNote} createNote={createNote} />
         {
           <Routes>
-            {/* {chatRooms.map((room) => (
-              <Route key={room.id} path={`/chat/${room.id}`} element={<ChatRoom />} />
-            ))} */}
+
             <Route path={`/chat/:id`} element={<ChatRoom />} />
             <Route
               path="/note"
               element={<NoteList notes={notes} deleteNote={deleteNote} createNote={createNote} />}
             />
 
-            <Route path="/note/view/:id" element={<NoteView notes={notes} onEdit={handleEdit} deleteNote={deleteNote} />} />
+            <Route path="/note/:id" element={<NoteView notes={notes} onEdit={handleEdit} deleteNote={deleteNote} />} />
 
             <Route path="/note/edit/:id" element={<NoteEditor noteId={noteId} title={noteTitle} content={noteContent} onSave={saveNote} onCancel={cancelNoteEditing} />} />
 

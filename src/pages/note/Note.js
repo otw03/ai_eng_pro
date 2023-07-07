@@ -11,15 +11,11 @@ const Note = ({ note }) => {
 
   return (
     <NoteContainer>
-      
-      <h3>            
-        <Link to={`/main/note/view/${note.id}`}>
-            {note.title}
-        </Link>
+      <h3>
+        <Link to={`/main/note/${note.id}`}>{note.title}</Link>
       </h3>
     </NoteContainer>
   );
 };
-
 
 export default Note;

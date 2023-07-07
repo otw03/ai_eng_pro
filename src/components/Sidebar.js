@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import SidebarMenuItem from './SidebarMenuItem';
 import axios from 'axios';
@@ -32,14 +33,9 @@ const Menu = styled.ul`
   margin: 0;
 `;
 
-const Sidebar = ({ chatRooms, setChatRooms }) => {
+const Sidebar = ({ chatRooms, setChatRooms, notes, setNotes, deleteNote, createNote }) => {
   // 사이드바 상태
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const sampleNotes = [
-    { id: 'note1', name: '노트1', type: 'note' },
-    { id: 'note2', name: '노트2', type: 'note' },
-  ];
 
   // 사이드바 토글 버튼 이벤트
   const handleToggleSidebar = () => {
@@ -56,7 +52,7 @@ const Sidebar = ({ chatRooms, setChatRooms }) => {
       // fetchedChatRooms 배열을 순회하여 새로운 채팅방 목록을 생성
       const newRooms = fetchedChatRooms.map((room, index) => ({
         id: room._id,
-        name: room.title,
+        title: room.title,
         type: 'chat',
       }));
 
@@ -66,10 +62,32 @@ const Sidebar = ({ chatRooms, setChatRooms }) => {
     }
   };
 
+  // Note 목록 조회
+  const fetchNotes = async () => {
+    try {
+      const response = await axios.get('/note');
+      const fetchedNotes = response.data;
+      console.log(fetchedNotes);
+      console.log(notes);
+      // fetchedChatRooms 배열을 순회하여 새로운 채팅방 목록을 생성
+      const newNotes = fetchedNotes.map((note, index) => ({
+        id: note._id,
+        title: note.title,
+        content: note.content,
+        type: 'note',
+      }));
+      
+      setNotes([...notes, ...newNotes]);
+      console.log(newNotes);
+    } catch (error) {
+      console.error('Failed to fetch notes:', error);
+    }
+  };
+
   useEffect(() => {
     fetchChatRooms();
+    fetchNotes();
   }, []);
-
 
   // 채팅방 생성
   const handleCreateChatRoom = async () => {
@@ -81,7 +99,7 @@ const Sidebar = ({ chatRooms, setChatRooms }) => {
     
     const newRoom = {
       id: response.data.chatRoom._id,
-      name: response.data.chatRoom.title,
+      title: response.data.chatRoom.title,
       type: 'chat',
     };
     setChatRooms([...chatRooms, newRoom]);
@@ -112,10 +130,10 @@ const Sidebar = ({ chatRooms, setChatRooms }) => {
       <ToggleButton onClick={handleToggleSidebar}>
         {isCollapsed ? '>' : '<'}
       </ToggleButton>
-      <SidebarContent isCollapsed={isCollapsed}> {/* 사이드바를 토글하였을 때 사이드바 내부의 컨텐츠를 숨기는 코드 */}
+      <SidebarContent isCollapsed={isCollapsed} > {/* 사이드바를 토글하였을 때 사이드바 내부의 컨텐츠를 숨기는 코드 */}
         <Menu>
           <SidebarMenuItem title="ChatRoom" itemList={chatRooms} onCreateChatRoom={handleCreateChatRoom} onDeleteChatRoom={handleDeleteChatRoom} />
-          <SidebarMenuItem title="NoteList" itemList={sampleNotes} />
+          <SidebarMenuItem title="NoteList" itemList={notes} deleteNote={deleteNote} createNote={createNote} />
         </Menu>
       </SidebarContent>
     </SidebarContainer>

@@ -16,7 +16,7 @@ const Content = styled.p`
 `;
 
 const ButtonContainer = styled.div`
- -top: 20px;
+  -top: 20px;
   display: flex;
   justify-content: space-between;
 `;
@@ -33,10 +33,10 @@ const Button = styled.button`
 
 const NoteView = ({ notes, onEdit, deleteNote }) => {
   const { id } = useParams();
+  console.log(id);
   const navigate = useNavigate();
-
-  const note = notes.find((note) => note.id === parseInt(id));
-
+  console.log(notes);
+  const note = notes.find((note) => note.id === id);
   if (!note) return <NoteContainer>노트를 찾을 수 없습니다.</NoteContainer>;
 
   // 수정 버튼

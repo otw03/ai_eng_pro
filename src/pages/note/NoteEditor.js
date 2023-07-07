@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 // import { useNavigate } from "react-router-dom";
 
 const EditorContainer = styled.div`
@@ -53,18 +53,18 @@ const CancelButton = styled(Button)`
 `;
 
 const NoteEditor = ({ noteId, title, content, onSave, onCancel }) => {
-  const [inputTitle, setInputTitle] = useState('');
-  const [inputContent, setInputContent] = useState('');
+  const [inputTitle, setInputTitle] = useState("");
+  const [inputContent, setInputContent] = useState("");
 
   useEffect(() => {
-    setInputTitle(title || '');
-    setInputContent(content || '');
+    setInputTitle(title || "");
+    setInputContent(content || "");
   }, [title, content]);
 
   const saveAndGoBack = () => {
     onSave(noteId, inputTitle, inputContent);
   };
-  
+
   const handleClickCancel = () => {
     onCancel();
   };
@@ -84,7 +84,7 @@ const NoteEditor = ({ noteId, title, content, onSave, onCancel }) => {
       />
       <ButtonGroup>
         <SaveButton onClick={saveAndGoBack}>저장</SaveButton>
-        <CancelButton onClick={handleClickCancel }>취소</CancelButton>
+        <CancelButton onClick={handleClickCancel}>취소</CancelButton>
       </ButtonGroup>
     </EditorContainer>
   );

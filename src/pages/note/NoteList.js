@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
 // import { Link } from "react-router-dom";
 
 import Note from "./Note";
@@ -39,6 +40,7 @@ const Button = styled.button`
 
 const NoteList = ({ notes, deleteNote, createNote }) => {
   // const noteList = notes || [];
+  console.log(notes);
 
   return (
     <Container>

@@ -13,6 +13,7 @@ const passport = require("passport");
 const authRouter = require('./routes/auth');
 const emailRouter = require('./routes/email');
 const chatRouter = require("./routes/chat");
+const noteRouter = require('./routes/note');
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use(passport.session());
 app.use('/auth', authRouter);
 app.use('/find', emailRouter);
 app.use('/chat', chatRouter);
+app.use('/note', noteRouter); 
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
